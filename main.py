@@ -1,11 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import json
-import time
-import threading
-import asyncio
 
-auto_calc_thread = None
 ayarlar_dosyasi = "ayarlar.json"
 def ayarlari_oku():
     try:
@@ -13,16 +9,20 @@ def ayarlari_oku():
             ayarlar = json.load(dosya)
             kargo_entry.insert(0, ayarlar.get("kargo", ""))
             komisyon_entry.insert(0, ayarlar.get("komisyon", ""))
+            topmost_var.set(ayarlar.get("topmost", False))
+            window.attributes("-topmost", topmost_var.get())
     except FileNotFoundError:
         pass
 
 def ayarlari_kaydet():
     kargo_deger = kargo_entry.get()
     komisyon_deger = komisyon_entry.get()
+    topmost_deger = topmost_var.get()
 
     ayarlar = {
         "kargo": kargo_deger,
-        "komisyon": komisyon_deger
+        "komisyon": komisyon_deger,
+        "topmost": topmost_deger
     }
 
     with open(ayarlar_dosyasi, "w") as dosya:
@@ -46,12 +46,8 @@ def on_exit():
     ayarlari_kaydet()
     window.destroy()
 
-def start_auto_calc_thread():
-    global auto_calc_thread
-    if not auto_calc_thread:
-        auto_calc_thread = threading.Thread(target=hesapla)
-        auto_calc_thread.daemon = True
-        auto_calc_thread.start()
+def toggle_topmost():
+    window.attributes("-topmost", not window.attributes("-topmost"))
 
 window = tk.Tk()
 window.title("Hesaplayıcı")
@@ -70,9 +66,6 @@ window.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
 style = ttk.Style()
 style.configure("BoldRed.TLabel", foreground="red", font=("Arial", 12, "bold"))
 
-bold_red_label = ttk.Label(window, text="", style="BoldRed.TLabel")
-bold_red_label.pack()
-
 satis_label = tk.Label(window, text="Satış Fiyatı (TL):")
 satis_label.pack()
 satis_entry = tk.Entry(window)
@@ -88,7 +81,7 @@ kargo_label.pack()
 kargo_entry = tk.Entry(window)
 kargo_entry.pack()
 
-komisyon_label = tk.Label(window, text="Komisyon oranı: %")
+komisyon_label = tk.Label(window, text="Komisyon Oranı (%):")
 komisyon_label.pack()
 komisyon_entry = tk.Entry(window)
 komisyon_entry.pack()
@@ -96,11 +89,15 @@ komisyon_entry.pack()
 hesapla_dugme = tk.Button(window, text="Hesapla", command=hesapla)
 hesapla_dugme.pack()
 
-bold_red_label = ttk.Label(window, text="Kâr sonuç:", style="BoldRed.TLabel")
+bold_red_label = ttk.Label(window, text="Kâr Sonuç:", style="BoldRed.TLabel")
 bold_red_label.pack()
 
 komisyon_sonuc_label = tk.Label(window, text="")
 komisyon_sonuc_label.pack()
+
+topmost_var = tk.BooleanVar()
+topmost_checkbox = tk.Checkbutton(window, text="Üstte Tut", variable=topmost_var, command=toggle_topmost)
+topmost_checkbox.pack(pady=10)
 
 ayarlari_oku()
 
