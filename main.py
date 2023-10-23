@@ -41,7 +41,6 @@ def hesapla():
     except ValueError:
         komisyon_sonuc_label.config(text="Geçersiz Giriş")
 
-
 def on_exit():
     ayarlari_kaydet()
     window.destroy()
@@ -58,7 +57,7 @@ screen_height = window.winfo_screenheight()
 window_width = 200
 window_height = 260
 
-x_position = screen_width - window_width - 20
+x_position = 20
 y_position = screen_height - window_height - 100
 
 window.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
