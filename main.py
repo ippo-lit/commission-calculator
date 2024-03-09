@@ -28,6 +28,25 @@ def ayarlari_kaydet():
     with open(ayarlar_dosyasi, "w") as dosya:
         json.dump(ayarlar, dosya)
 
+
+def otomatik_satış_fiyatı_doldur():
+    try:
+        alim_fiyati = float(alim_entry.get())
+        kargo_fiyati = float(kargo_entry.get())
+
+        maliyet = alim_fiyati * 2 + kargo_fiyati
+        komisyon = maliyet * float(komisyon_entry.get()) / 100
+
+        satış_fiyati = maliyet + komisyon
+        satis_entry.delete(0, tk.END)
+        satis_entry.insert(0, f"{satış_fiyati:.2f}")
+
+        hesapla()
+
+    except ValueError:
+        komisyon_sonuc_label.config(text="Geçersiz Giriş")
+
+
 def hesapla():
     try:
         satis_fiyati = float(satis_entry.get())
@@ -40,6 +59,7 @@ def hesapla():
         bold_red_label.config(text=f"Kâr Sonuç: {sonuc:.2f} TL")
     except ValueError:
         komisyon_sonuc_label.config(text="Geçersiz Giriş")
+
 
 def on_exit():
     ayarlari_kaydet()
@@ -55,7 +75,7 @@ screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
 window_width = 200
-window_height = 260
+window_height = 360
 
 x_position = 20
 y_position = screen_height - window_height - 100
@@ -64,6 +84,9 @@ window.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
 
 style = ttk.Style()
 style.configure("BoldRed.TLabel", foreground="red", font=("Arial", 12, "bold"))
+
+otomatik_doldur_dugme = tk.Button(window, text="Otomatik Doldur", command=otomatik_satış_fiyatı_doldur)
+otomatik_doldur_dugme.pack()
 
 satis_label = tk.Label(window, text="Satış Fiyatı (TL):")
 satis_label.pack()
