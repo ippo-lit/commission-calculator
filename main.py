@@ -34,7 +34,7 @@ def otomatik_satış_fiyatı_doldur():
         alim_fiyati = float(alim_entry.get())
         kargo_fiyati = float(kargo_entry.get())
 
-        maliyet = alim_fiyati * 2 + kargo_fiyati
+        maliyet = alim_fiyati * 2.1 + kargo_fiyati
         komisyon = maliyet * float(komisyon_entry.get()) / 100
 
         satış_fiyati = maliyet + komisyon
